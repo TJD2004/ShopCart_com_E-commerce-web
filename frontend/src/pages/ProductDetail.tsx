@@ -16,7 +16,12 @@ import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  // Set up axios instance with base URL
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;  // e.g. https://shopcart-com-e-commerce-web.onrender.com or including /api as you've configured
+  const api = axios.create({
+    baseURL: API_BASE_URL,
+    withCredentials: true,
+  });
 
 interface Product {
   _id: string;
@@ -60,7 +65,7 @@ const ProductDetail: React.FC = () => {
 
   const fetchProduct = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/products/${id}`);
+      const response = await axios.get(`${API_BASE_URL}/api/products/${id}`);
       setProduct(response.data);
     } catch (error) {
       console.error('Failed to fetch product:', error);
