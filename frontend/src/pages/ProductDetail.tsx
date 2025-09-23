@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  Heart, 
-  ShoppingCart, 
-  Star, 
-  Minus, 
-  Plus, 
+import {
+  Heart,
+  ShoppingCart,
+  Star,
+  Minus,
+  Plus,
   ArrowLeft,
   Truck,
   Shield,
@@ -15,6 +15,8 @@ import { Button, Chip, Rating } from '@mui/material';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 interface Product {
   _id: string;
@@ -40,7 +42,7 @@ const ProductDetail: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [addingToCart, setAddingToCart] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
-  
+
   const { isAuthenticated } = useAuth();
   const { addToCart, addToWishlist, removeFromWishlist, wishlist } = useCart();
 
@@ -58,7 +60,7 @@ const ProductDetail: React.FC = () => {
 
   const fetchProduct = async () => {
     try {
-      const response = await axios.get(`/api/products/${id}`);
+      const response = await axios.get(`${API_BASE_URL}/products/${id}`);
       setProduct(response.data);
     } catch (error) {
       console.error('Failed to fetch product:', error);
@@ -72,7 +74,7 @@ const ProductDetail: React.FC = () => {
       navigate('/auth');
       return;
     }
-    
+
     setAddingToCart(true);
     try {
       await addToCart(product!._id, quantity);
@@ -137,14 +139,13 @@ const ProductDetail: React.FC = () => {
     );
   }
 
-  const discount = product.originalPrice 
+  const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Breadcrumb */}
-      <button 
+      <button
         onClick={() => navigate(-1)}
         className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 mb-6"
       >
@@ -153,16 +154,15 @@ const ProductDetail: React.FC = () => {
       </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Product Images */}
         <div className="space-y-4">
           <div className="aspect-square overflow-hidden rounded-lg bg-gray-100">
-            <img 
-              src={product.images[selectedImage]} 
+            <img
+              src={product.images[selectedImage]}
               alt={product.name}
               className="w-full h-full object-cover"
             />
           </div>
-          
+
           {product.images.length > 1 && (
             <div className="grid grid-cols-4 gap-2">
               {product.images.map((image, index) => (
@@ -173,8 +173,8 @@ const ProductDetail: React.FC = () => {
                     selectedImage === index ? 'border-primary-500' : 'border-gray-200'
                   }`}
                 >
-                  <img 
-                    src={image} 
+                  <img
+                    src={image}
                     alt={`${product.name} ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
@@ -184,7 +184,6 @@ const ProductDetail: React.FC = () => {
           )}
         </div>
 
-        {/* Product Info */}
         <div className="space-y-6">
           <div>
             <div className="flex items-start justify-between mb-2">
@@ -193,8 +192,8 @@ const ProductDetail: React.FC = () => {
                 <button
                   onClick={handleWishlistToggle}
                   className={`p-2 rounded-full transition-colors ${
-                    isWishlisted 
-                      ? 'text-red-500 bg-red-50 hover:bg-red-100' 
+                    isWishlisted
+                      ? 'text-red-500 bg-red-50 hover:bg-red-100'
                       : 'text-gray-400 hover:text-red-500 hover:bg-gray-100'
                   }`}
                 >
@@ -202,11 +201,9 @@ const ProductDetail: React.FC = () => {
                 </button>
               )}
             </div>
-            
-            {product.brand && (
-              <p className="text-lg text-gray-600 mb-4">{product.brand}</p>
-            )}
-            
+
+            {product.brand && <p className="text-lg text-gray-600 mb-4">{product.brand}</p>}
+
             <div className="flex items-center space-x-4 mb-4">
               <div className="flex items-center">
                 <Rating value={product.rating.average} readOnly precision={0.1} />
@@ -218,7 +215,6 @@ const ProductDetail: React.FC = () => {
             </div>
           </div>
 
-          {/* Price */}
           <div className="space-y-2">
             <div className="flex items-center space-x-3">
               <span className="text-3xl font-bold text-gray-900">${product.price}</span>
@@ -236,13 +232,11 @@ const ProductDetail: React.FC = () => {
             </p>
           </div>
 
-          {/* Description */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Description</h3>
             <p className="text-gray-600 leading-relaxed">{product.description}</p>
           </div>
 
-          {/* Features */}
           {product.features && product.features.length > 0 && (
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Key Features</h3>
@@ -257,7 +251,6 @@ const ProductDetail: React.FC = () => {
             </div>
           )}
 
-          {/* Quantity and Add to Cart */}
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
               <label className="text-sm font-medium text-gray-700">Quantity:</label>
@@ -299,17 +292,15 @@ const ProductDetail: React.FC = () => {
 
             {!isAuthenticated && (
               <p className="text-sm text-gray-500 text-center">
-                Please <button 
-                  onClick={() => navigate('/auth')} 
-                  className="text-primary-600 hover:underline"
-                >
+                Please{' '}
+                <button onClick={() => navigate('/auth')} className="text-primary-600 hover:underline">
                   sign in
-                </button> to add items to cart
+                </button>{' '}
+                to add items to cart
               </p>
             )}
           </div>
 
-          {/* Features */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t">
             <div className="flex items-center space-x-2 text-sm text-gray-600">
               <Truck className="h-5 w-5 text-green-600" />
@@ -327,14 +318,16 @@ const ProductDetail: React.FC = () => {
         </div>
       </div>
 
-      {/* Specifications */}
       {product.specifications && product.specifications.length > 0 && (
         <div className="mt-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Specifications</h2>
           <div className="card p-6">
             <div className="grid gap-4">
               {product.specifications.map((spec, index) => (
-                <div key={index} className="flex justify-between py-2 border-b border-gray-100 last:border-b-0">
+                <div
+                  key={index}
+                  className="flex justify-between py-2 border-b border-gray-100 last:border-b-0"
+                >
                   <span className="font-medium text-gray-900">{spec.key}</span>
                   <span className="text-gray-600">{spec.value}</span>
                 </div>
