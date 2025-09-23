@@ -13,7 +13,26 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+  'https://shopcart-com.vercel.app',
+  'https://shopcart-e-commerce-web.netlify.app',
+  'http://localhost:5173' // (optional: for local development)
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS policy: Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
+
+
 app.use(express.json());
 
 // MongoDB Connection

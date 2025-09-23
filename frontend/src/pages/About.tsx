@@ -74,7 +74,7 @@ const About: React.FC = () => {
             <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Story</h2>
             <div className="space-y-4 text-gray-600 leading-relaxed">
               <p>
-                Founded in 2020, ShopCart.com started with a simple mission: to make online shopping 
+                Founded in 2025, ShopCart.com started with a simple mission: to make online shopping 
                 more accessible, enjoyable, and trustworthy for everyone. What began as a small startup 
                 has grown into a leading e-commerce platform serving millions of customers worldwide.
               </p>
