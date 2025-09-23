@@ -160,7 +160,7 @@ const ProductListing: React.FC = () => {
       if (priceRange[0] > 0) params.minPrice = priceRange[0];
       if (priceRange[1] < 2000) params.maxPrice = priceRange[1];
 
-      const response = await api.get('/products', { params });
+      const response = await api.get('/api/products', { params });
       const data = response.data;
 
       setProducts(data.products || []);
