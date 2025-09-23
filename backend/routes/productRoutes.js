@@ -892,16 +892,71 @@ const sampleProducts = [
   }
 ];
 
+/// Get featured products
+router.get('/featured/products', async (req, res) => {
+  try {
+    const { limit = 8 } = req.query;
+
+    const products = await Product.find({
+      isFeatured: true,
+      isActive: true
+    }).limit(Number(limit));
+
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Get products by category
+router.get('/category/:category', async (req, res) => {
+  try {
+    const { category } = req.params;
+    const { limit = 10 } = req.query;
+
+    const products = await Product.find({
+      category: category,
+      isActive: true
+    }).limit(Number(limit));
+
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Search products
+router.get('/search/:query', async (req, res) => {
+  try {
+    const { query } = req.params;
+    const { limit = 20 } = req.query;
+
+    const products = await Product.find({
+      $or: [
+        { name: { $regex: query, $options: 'i' } },
+        { description: { $regex: query, $options: 'i' } },
+        { brand: { $regex: query, $options: 'i' } },
+        { tags: { $in: [new RegExp(query, 'i')] } }
+      ],
+      isActive: true
+    }).limit(Number(limit));
+
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 // Get all products with filtering and sorting
 router.get('/', async (req, res) => {
   try {
-    const { 
-      category, 
+    const {
+      category,
       subcategory,
       brand,
-      minPrice, 
-      maxPrice, 
-      sortBy = 'createdAt', 
+      minPrice,
+      maxPrice,
+      sortBy = 'createdAt',
       sortOrder = 'desc',
       search,
       featured,
@@ -910,29 +965,29 @@ router.get('/', async (req, res) => {
     } = req.query;
 
     const filter = { isActive: true };
-    
+
     if (category && category !== 'all') {
       filter.category = category;
     }
-    
+
     if (subcategory) {
       filter.subcategory = subcategory;
     }
-    
+
     if (brand) {
       filter.brand = new RegExp(brand, 'i');
     }
-    
+
     if (minPrice || maxPrice) {
       filter.price = {};
       if (minPrice) filter.price.$gte = Number(minPrice);
       if (maxPrice) filter.price.$lte = Number(maxPrice);
     }
-    
+
     if (search) {
       filter.$text = { $search: search };
     }
-    
+
     if (featured === 'true') {
       filter.isFeatured = true;
     }
@@ -964,7 +1019,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get single product
+// Get single product (must be last!)
 router.get('/:id', async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -972,61 +1027,6 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Product not found' });
     }
     res.json(product);
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
-
-// Get products by category
-router.get('/category/:category', async (req, res) => {
-  try {
-    const { category } = req.params;
-    const { limit = 10 } = req.query;
-    
-    const products = await Product.find({ 
-      category: category,
-      isActive: true 
-    }).limit(Number(limit));
-    
-    res.json(products);
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
-
-// Get featured products
-router.get('/featured/products', async (req, res) => {
-  try {
-    const { limit = 8 } = req.query;
-    
-    const products = await Product.find({ 
-      isFeatured: true,
-      isActive: true 
-    }).limit(Number(limit));
-    
-    res.json(products);
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
-
-// Search products
-router.get('/search/:query', async (req, res) => {
-  try {
-    const { query } = req.params;
-    const { limit = 20 } = req.query;
-    
-    const products = await Product.find({
-      $or: [
-        { name: { $regex: query, $options: 'i' } },
-        { description: { $regex: query, $options: 'i' } },
-        { brand: { $regex: query, $options: 'i' } },
-        { tags: { $in: [new RegExp(query, 'i')] } }
-      ],
-      isActive: true
-    }).limit(Number(limit));
-    
-    res.json(products);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
