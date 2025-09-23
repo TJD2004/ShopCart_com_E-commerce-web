@@ -892,7 +892,9 @@ const sampleProducts = [
   }
 ];
 
-/// Get featured products
+// ------------------------------
+// Get featured products
+// ------------------------------
 router.get('/featured/products', async (req, res) => {
   try {
     const { limit = 8 } = req.query;
@@ -908,14 +910,17 @@ router.get('/featured/products', async (req, res) => {
   }
 });
 
+
+// ------------------------------
 // Get products by category
+// ------------------------------
 router.get('/category/:category', async (req, res) => {
   try {
     const { category } = req.params;
     const { limit = 10 } = req.query;
 
     const products = await Product.find({
-      category: category,
+      category,
       isActive: true
     }).limit(Number(limit));
 
@@ -925,7 +930,10 @@ router.get('/category/:category', async (req, res) => {
   }
 });
 
-// Search products
+
+// ------------------------------
+// Search products by keyword
+// ------------------------------
 router.get('/search/:query', async (req, res) => {
   try {
     const { query } = req.params;
@@ -947,7 +955,10 @@ router.get('/search/:query', async (req, res) => {
   }
 });
 
-// Get all products with filtering and sorting
+
+// ------------------------------
+// Get all products (with filters, sorting, pagination)
+// ------------------------------
 router.get('/', async (req, res) => {
   try {
     const {
@@ -970,11 +981,11 @@ router.get('/', async (req, res) => {
       filter.category = category;
     }
 
-    if (subcategory) {
+    if (subcategory && subcategory !== 'all') {
       filter.subcategory = subcategory;
     }
 
-    if (brand) {
+    if (brand && brand !== 'all') {
       filter.brand = new RegExp(brand, 'i');
     }
 
@@ -1019,20 +1030,10 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get single product (must be last!)
-router.get('/:id', async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
-    res.json(product);
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
 
+// ------------------------------
 // Seed products (for development)
+// ------------------------------
 router.post('/seed', async (req, res) => {
   try {
     await Product.deleteMany({});
@@ -1042,5 +1043,25 @@ router.post('/seed', async (req, res) => {
     res.status(500).json({ message: 'Error seeding products', error: error.message });
   }
 });
+
+
+// ------------------------------
+// Get single product by ID
+// ⚠️ MUST be last to avoid route conflicts
+// ------------------------------
+router.get('/:id', async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 
 export default router;
