@@ -462,9 +462,9 @@ const ProductListing: React.FC = () => {
             </div>
           ) : products.length === 0 ? (
             <div className="text-center py-16">
-              <div className="text-gray-400 mb-4">
+              {/* <div className="text-gray-400 mb-4">
                 <Package className="h-24 w-24 mx-auto" />
-              </div>
+              </div> */}
               <h2 className="text-2xl font-bold text-gray-900 mb-2">No products found</h2>
               <p className="text-gray-600 mb-6">
                 Try adjusting your filters or search terms to find what you're looking for.
