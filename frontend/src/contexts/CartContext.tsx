@@ -27,6 +27,8 @@ interface CartContextType {
   getCartTotal: () => number;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
+
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const useCart = () => {
@@ -54,7 +56,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchCart = async () => {
     try {
-      const response = await axios.get('/api/cart');
+      const response = await axios.get(`${API_BASE_URL}/api/cart`, {
+        withCredentials: true,
+      });
       setCart(response.data);
     } catch (error) {
       console.error('Failed to fetch cart:', error);
@@ -64,7 +68,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchWishlist = async () => {
     try {
-      const response = await axios.get('/api/cart/wishlist');
+      const response = await axios.get(`${API_BASE_URL}/api/cart/wishlist`, {
+        withCredentials: true,
+      });
       setWishlist(response.data);
     } catch (error) {
       console.error('Failed to fetch wishlist:', error);
@@ -74,7 +80,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const addToCart = async (productId: string, quantity: number = 1) => {
     try {
-      const response = await axios.post('/api/cart/add', { productId, quantity });
+      const response = await axios.post(
+        `${API_BASE_URL}/api/cart/add`,
+        { productId, quantity },
+        { withCredentials: true }
+      );
       setCart(response.data);
     } catch (error) {
       throw new Error('Failed to add item to cart');
@@ -83,7 +93,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateCartItem = async (productId: string, quantity: number) => {
     try {
-      const response = await axios.put('/api/cart/update', { productId, quantity });
+      const response = await axios.put(
+        `${API_BASE_URL}/api/cart/update`,
+        { productId, quantity },
+        { withCredentials: true }
+      );
       setCart(response.data);
     } catch (error) {
       throw new Error('Failed to update cart item');
@@ -92,7 +106,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const removeFromCart = async (productId: string) => {
     try {
-      const response = await axios.delete(`/api/cart/remove/${productId}`);
+      const response = await axios.delete(`${API_BASE_URL}/api/cart/remove/${productId}`, {
+        withCredentials: true,
+      });
       setCart(response.data);
     } catch (error) {
       throw new Error('Failed to remove item from cart');
@@ -101,7 +117,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const addToWishlist = async (productId: string) => {
     try {
-      const response = await axios.post('/api/cart/wishlist/add', { productId });
+      const response = await axios.post(
+        `${API_BASE_URL}/api/cart/wishlist/add`,
+        { productId },
+        { withCredentials: true }
+      );
       setWishlist(response.data);
     } catch (error) {
       throw new Error('Failed to add item to wishlist');
@@ -110,7 +130,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const removeFromWishlist = async (productId: string) => {
     try {
-      const response = await axios.delete(`/api/cart/wishlist/remove/${productId}`);
+      const response = await axios.delete(`${API_BASE_URL}/api/cart/wishlist/remove/${productId}`, {
+        withCredentials: true,
+      });
       setWishlist(response.data);
     } catch (error) {
       throw new Error('Failed to remove item from wishlist');
@@ -122,12 +144,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const getCartTotal = () => {
-    return cart.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+    return cart.reduce((total, item) => total + item.product.price * item.quantity, 0);
   };
 
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
-  const value = {
+  const value: CartContextType = {
     cart,
     cartCount,
     wishlist,
@@ -137,7 +159,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     addToWishlist,
     removeFromWishlist,
     clearCart,
-    getCartTotal
+    getCartTotal,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

@@ -17,6 +17,8 @@ interface AuthContextType {
   logout: () => void;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
@@ -43,7 +45,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchUser = async () => {
     try {
-      const response = await axios.get('/api/auth/me');
+      const response = await axios.get(`${API_BASE_URL}/api/auth/me`, {
+        withCredentials: true,
+      });
       setUser(response.data.user);
     } catch (error) {
       localStorage.removeItem('token');
@@ -55,9 +59,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await axios.post('/api/auth/login', { email, password });
+      const response = await axios.post(
+        `${API_BASE_URL}/api/auth/login`,
+        { email, password },
+        { withCredentials: true }
+      );
       const { token, user } = response.data;
-      
+
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setUser(user);
@@ -68,9 +76,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const register = async (name: string, email: string, password: string, phone?: string) => {
     try {
-      const response = await axios.post('/api/auth/register', { name, email, password, phone });
+      const response = await axios.post(
+        `${API_BASE_URL}/api/auth/register`,
+        { name, email, password, phone },
+        { withCredentials: true }
+      );
       const { token, user } = response.data;
-      
+
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setUser(user);
@@ -85,13 +97,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
   };
 
-  const value = {
+  const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
     loading,
     login,
     register,
-    logout
+    logout,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
