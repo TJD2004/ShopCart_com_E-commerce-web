@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   X, 
@@ -20,18 +20,55 @@ interface SidebarProps {
   onClose: () => void;
 }
 
-const categories = [
-  { name: 'Electronics', icon: Smartphone, path: '/products?category=electronics' },
-  { name: 'Clothing', icon: Shirt, path: '/products?category=clothing' },
-  { name: 'Home & Garden', icon: Home, path: '/products?category=home' },
-  { name: 'Sports', icon: Dumbbell, path: '/products?category=sports' },
-  { name: 'Books', icon: Book, path: '/products?category=books' },
-  { name: 'Beauty', icon: Sparkles, path: '/products?category=beauty' },
-  { name: 'Toys', icon: Gamepad2, path: '/products?category=toys' },
-  { name: 'Automotive', icon: Car, path: '/products?category=automotive' }
-];
+interface Category {
+  name: string;
+  iconName: string;
+  path: string;
+}
+
+// Map iconName from backend to actual icon component
+const iconMap: Record<string, React.ElementType> = {
+  Smartphone,
+  Shirt,
+  Home,
+  Dumbbell,
+  Book,
+  Sparkles,
+  Gamepad2,
+  Car,
+};
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/categories`);
+        const data = await response.json();
+        // Assuming API returns array of { name, iconName, path }
+        setCategories(data);
+      } catch (error) {
+        console.error('Failed to fetch categories', error);
+        // fallback to default if needed
+        setCategories([
+          { name: 'Electronics', iconName: 'Smartphone', path: '/products?category=electronics' },
+          { name: 'Clothing', iconName: 'Shirt', path: '/products?category=clothing' },
+          { name: 'Home & Garden', iconName: 'Home', path: '/products?category=home' },
+          { name: 'Sports', iconName: 'Dumbbell', path: '/products?category=sports' },
+          { name: 'Books', iconName: 'Book', path: '/products?category=books' },
+          { name: 'Beauty', iconName: 'Sparkles', path: '/products?category=beauty' },
+          { name: 'Toys', iconName: 'Gamepad2', path: '/products?category=toys' },
+          { name: 'Automotive', iconName: 'Car', path: '/products?category=automotive' },
+        ]);
+      }
+    }
+
+    fetchCategories();
+  }, []);
+
   return (
     <Drawer anchor="left" open={open} onClose={onClose}>
       <div className="w-64 bg-white h-full">
@@ -62,20 +99,23 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
           
           <Divider />
           
-          {categories.map((category) => (
-            <ListItem 
-              key={category.name} 
-              button 
-              component={Link} 
-              to={category.path} 
-              onClick={onClose}
-            >
-              <ListItemIcon>
-                <category.icon className="h-5 w-5" />
-              </ListItemIcon>
-              <ListItemText primary={category.name} />
-            </ListItem>
-          ))}
+          {categories.map((category) => {
+            const IconComponent = iconMap[category.iconName] || Package;
+            return (
+              <ListItem 
+                key={category.name} 
+                button 
+                component={Link} 
+                to={category.path} 
+                onClick={onClose}
+              >
+                <ListItemIcon>
+                  <IconComponent className="h-5 w-5" />
+                </ListItemIcon>
+                <ListItemText primary={category.name} />
+              </ListItem>
+            );
+          })}
         </List>
       </div>
     </Drawer>

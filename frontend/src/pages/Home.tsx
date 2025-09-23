@@ -14,9 +14,12 @@ interface Product {
   category: string;
 }
 
+// Read backend base URL from environment variable
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
 const Home: React.FC = () => {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-  const [productsByCategory, setProductsByCategory] = useState<{[key: string]: Product[]}>({});
+  const [productsByCategory, setProductsByCategory] = useState<{ [key: string]: Product[] }>({});
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -48,24 +51,24 @@ const Home: React.FC = () => {
     fetchFeaturedProducts();
     fetchProductsByCategory();
     seedProductsIfNeeded();
-    
+
     // Auto-slide carousel
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % discountSlides.length);
     }, 5000);
-    
+
     return () => clearInterval(interval);
   }, []);
 
   const seedProductsIfNeeded = async () => {
     try {
       // Check if products exist
-      const response = await axios.get('/api/products?limit=1');
+      const response = await axios.get(`${API_BASE_URL}/api/products?limit=1`);
       const products = response.data.products || response.data;
-      
+
       if (!products || products.length === 0) {
         console.log('No products found, seeding database...');
-        await axios.post('/api/products/seed');
+        await axios.post(`${API_BASE_URL}/api/products/seed`);
         console.log('Products seeded successfully');
         // Refresh the page data
         fetchFeaturedProducts();
@@ -78,7 +81,7 @@ const Home: React.FC = () => {
 
   const fetchFeaturedProducts = async () => {
     try {
-      const response = await axios.get('/api/products?featured=true&limit=8');
+      const response = await axios.get(`${API_BASE_URL}/api/products?featured=true&limit=8`);
       setFeaturedProducts(response.data.products || response.data);
     } catch (error) {
       console.error('Failed to fetch featured products:', error);
@@ -89,13 +92,13 @@ const Home: React.FC = () => {
   const fetchProductsByCategory = async () => {
     try {
       const categories = ['electronics', 'clothing', 'home', 'sports'];
-      const categoryData: {[key: string]: Product[]} = {};
-      
+      const categoryData: { [key: string]: Product[] } = {};
+
       await Promise.all(categories.map(async (category) => {
-        const response = await axios.get(`/api/products?category=${category}&limit=4`);
+        const response = await axios.get(`${API_BASE_URL}/api/products?category=${category}&limit=4`);
         categoryData[category] = response.data.products || response.data;
       }));
-      
+
       setProductsByCategory(categoryData);
     } catch (error) {
       console.error('Failed to fetch products by category:', error);
@@ -140,11 +143,11 @@ const Home: React.FC = () => {
             <div
               key={index}
               className={`absolute inset-0 transition-transform duration-500 ease-in-out ${
-                index === currentSlide ? 'translate-x-0' : 
-                index < currentSlide ? '-translate-x-full' : 'translate-x-full'
+                index === currentSlide ? 'translate-x-0' :
+                  index < currentSlide ? '-translate-x-full' : 'translate-x-full'
               }`}
             >
-              <div 
+              <div
                 className="h-full bg-cover bg-center relative"
                 style={{ backgroundImage: `url(${slide.image})` }}
               >
@@ -157,7 +160,7 @@ const Home: React.FC = () => {
                     <p className="text-xl md:text-2xl mb-8 animate-slide-up">
                       {slide.subtitle}
                     </p>
-                    <Link 
+                    <Link
                       to={slide.link}
                       className="inline-flex items-center space-x-2 bg-accent-500 hover:bg-accent-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all duration-200 hover:scale-105 animate-bounce-subtle"
                     >
@@ -170,7 +173,7 @@ const Home: React.FC = () => {
             </div>
           ))}
         </div>
-        
+
         {/* Navigation Arrows */}
         <button
           onClick={prevSlide}
@@ -184,7 +187,7 @@ const Home: React.FC = () => {
         >
           <ChevronRight className="h-6 w-6" />
         </button>
-        
+
         {/* Slide Indicators */}
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
           {discountSlides.map((_, index) => (
@@ -251,11 +254,11 @@ const Home: React.FC = () => {
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 capitalize">
               {category === 'electronics' ? 'Latest Electronics' :
-               category === 'clothing' ? 'Fashion & Style' :
-               category === 'home' ? 'Home & Living' :
-               category === 'sports' ? 'Sports & Fitness' : category}
+                category === 'clothing' ? 'Fashion & Style' :
+                  category === 'home' ? 'Home & Living' :
+                    category === 'sports' ? 'Sports & Fitness' : category}
             </h2>
-            <Link 
+            <Link
               to={`/products?category=${category}`}
               className="text-primary-600 hover:text-primary-700 font-medium flex items-center space-x-1"
             >
@@ -297,8 +300,8 @@ const Home: React.FC = () => {
                 className="group card overflow-hidden hover:scale-105 transform transition-transform duration-200"
               >
                 <div className="aspect-square overflow-hidden">
-                  <img 
-                    src={category.image} 
+                  <img
+                    src={category.image}
                     alt={category.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />

@@ -14,6 +14,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
 import Logo from '../UI/Logo';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
 interface NavbarProps {
   onMenuClick: () => void;
 }
@@ -39,10 +41,25 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
     navigate('/');
   };
 
-  const handleSearch = (e: React.FormEvent) => {
+  // Now this function calls backend API for search
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    const trimmedQuery = searchQuery.trim();
+    if (!trimmedQuery) return;
+
+    try {
+      // Example: Call backend search API
+      const response = await fetch(`${API_BASE_URL}/api/products/search?q=${encodeURIComponent(trimmedQuery)}`);
+      if (!response.ok) throw new Error('Search API failed');
+      const results = await response.json();
+      
+      // For demo, you might want to save results in global state or context
+      // Then navigate to /products page with search results preloaded
+      // Here, we just navigate with query param (like original)
+      navigate(`/products?search=${encodeURIComponent(trimmedQuery)}`);
+    } catch (error) {
+      console.error('Search failed:', error);
+      // Optionally show an error message
     }
   };
 
