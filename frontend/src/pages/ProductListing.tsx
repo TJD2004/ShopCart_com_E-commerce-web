@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 import { Grid as GridIcon, List as ListIcon, Filter as FilterIcon, X as XIcon } from 'lucide-react';
 import { FormControl, Select, MenuItem, Slider, Chip, Pagination } from '@mui/material';
 import ProductCard from '../components/Product/ProductCard';
-import { api, API_CONFIG } from '../config/api';
 
 interface Product {
   _id: string;
