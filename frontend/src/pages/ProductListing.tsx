@@ -213,18 +213,18 @@ const ProductListing: React.FC = () => {
   }, [searchParams, sortBy, sortOrder, priceRange]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8 gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 sm:mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
             {searchQuery
               ? `Search: "${searchQuery}"`
               : category !== 'all'
               ? categories.find(cat => cat.value === category)?.label
               : 'All Products'}
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-sm sm:text-base text-gray-600 mt-1">
             {pagination.totalProducts} products found
             {getActiveFiltersCount() > 0 &&
               ` with ${getActiveFiltersCount()} filter${getActiveFiltersCount() > 1 ? 's' : ''}`}
@@ -233,12 +233,12 @@ const ProductListing: React.FC = () => {
         {/* Filter Toggle for Mobile */}
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className="lg:hidden btn-primary flex items-center space-x-2"
+          className="lg:hidden btn-primary flex items-center space-x-2 text-sm"
         >
           <FilterIcon className="h-4 w-4" />
           <span>Filters</span>
           {getActiveFiltersCount() > 0 && (
-            <span className="bg-accent-500 text-white text-xs rounded-full px-2 py-1">
+            <span className="bg-accent-500 text-white text-xs rounded-full px-1.5 py-0.5">
               {getActiveFiltersCount()}
             </span>
           )}
@@ -247,16 +247,16 @@ const ProductListing: React.FC = () => {
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Filters Sidebar */}
-        <div className={`lg:w-80 space-y-6 ${showFilters ? 'block' : 'hidden lg:block'}`}>
-          <div className="card p-6 sticky top-24 bg-white shadow">
+        <div className={`lg:w-80 space-y-4 sm:space-y-6 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+          <div className="card p-4 sm:p-6 sticky top-20 sm:top-24 bg-white shadow">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center space-x-2">
                 <FilterIcon className="h-5 w-5" />
                 <span>Filters</span>
               </h3>
               <div className="flex items-center space-x-2">
                 {getActiveFiltersCount() > 0 && (
-                  <button onClick={clearFilters} className="text-sm text-red-600 hover:text-red-700 flex items-center space-x-1">
+                  <button onClick={clearFilters} className="text-xs sm:text-sm text-red-600 hover:text-red-700 flex items-center space-x-1">
                     <XIcon className="h-4 w-4" />
                     <span>Clear All</span>
                   </button>
@@ -268,7 +268,7 @@ const ProductListing: React.FC = () => {
             </div>
 
             {/* Category Filter */}
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-3">Category</label>
               <FormControl fullWidth size="small">
                 <Select
@@ -286,7 +286,7 @@ const ProductListing: React.FC = () => {
 
             {/* Subcategory Filter */}
             {category !== 'all' && subcategories[category] && (
-              <div className="mb-6">
+              <div className="mb-4 sm:mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">Subcategory</label>
                 <FormControl fullWidth size="small">
                   <Select
@@ -308,7 +308,7 @@ const ProductListing: React.FC = () => {
             )}
 
             {/* Brand Filter */}
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-3">Brand</label>
               <FormControl fullWidth size="small">
                 <Select
@@ -329,7 +329,7 @@ const ProductListing: React.FC = () => {
             </div>
 
             {/* Price Range Filter */}
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Price Range: ${priceRange[0]} - ${priceRange[1]}
               </label>
@@ -358,9 +358,9 @@ const ProductListing: React.FC = () => {
         {/* Products Area */}
         <div className="flex-1">
           {/* Toolbar: Sorting & ViewToggle */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-4">
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">
+              <span className="text-xs sm:text-sm text-gray-600">
                 Showing {((currentPage - 1) * 12) + 1} - {Math.min(currentPage * 12, pagination.totalProducts)} of {pagination.totalProducts} results
               </span>
             </div>
@@ -386,13 +386,13 @@ const ProductListing: React.FC = () => {
               <div className="flex border border-gray-300 rounded-md">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`p-2 ${viewMode === 'grid' ? 'bg-primary-600 text-white' : 'text-gray-600 hover:text-gray-900'}`}
+                  className={`p-1.5 sm:p-2 ${viewMode === 'grid' ? 'bg-primary-600 text-white' : 'text-gray-600 hover:text-gray-900'}`}
                 >
                   <GridIcon className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`p-2 ${viewMode === 'list' ? 'bg-primary-600 text-white' : 'text-gray-600 hover:text-gray-900'}`}
+                  className={`p-1.5 sm:p-2 ${viewMode === 'list' ? 'bg-primary-600 text-white' : 'text-gray-600 hover:text-gray-900'}`}
                 >
                   <ListIcon className="h-4 w-4" />
                 </button>
@@ -402,10 +402,10 @@ const ProductListing: React.FC = () => {
 
           {/* Product Grid / List */}
           {loading ? (
-            <div className={viewMode === 'grid' ? 'grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' : 'space-y-4'}>
+            <div className={viewMode === 'grid' ? 'grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-4' : 'space-y-4'}>
               {Array.from({ length: 12 }).map((_, idx) => (
                 <div key={idx} className="card p-4 animate-pulse">
-                  <div className="bg-gray-300 h-48 rounded-md mb-4"></div>
+                  <div className="bg-gray-300 h-32 sm:h-40 md:h-48 rounded-md mb-4"></div>
                   <div className="space-y-2">
                     <div className="bg-gray-300 h-4 rounded"></div>
                     <div className="bg-gray-300 h-4 rounded w-3/4"></div>
@@ -416,15 +416,15 @@ const ProductListing: React.FC = () => {
             </div>
           ) : products.length === 0 ? (
             <div className="text-center py-16">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">No products found</h2>
-              <p className="text-gray-600">Try adjusting your filters or search terms.</p>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">No products found</h2>
+              <p className="text-sm sm:text-base text-gray-600 mb-4">Try adjusting your filters or search terms.</p>
               <button onClick={clearFilters} className="btn-primary">
                 Clear Filters
               </button>
             </div>
           ) : (
             <>
-              <div className={viewMode === 'grid' ? 'grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' : 'space-y-4'}>
+              <div className={viewMode === 'grid' ? 'grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-4' : 'space-y-4'}>
                 {products.map((product) => (
                   <ProductCard key={product._id} product={product} viewMode={viewMode} />
                 ))}
@@ -432,7 +432,7 @@ const ProductListing: React.FC = () => {
 
               {/* Pagination */}
               {pagination.totalPages > 1 && (
-                <div className="flex justify-center mt-8">
+                <div className="flex justify-center mt-6 sm:mt-8">
                   <Pagination
                     count={pagination.totalPages}
                     page={currentPage}

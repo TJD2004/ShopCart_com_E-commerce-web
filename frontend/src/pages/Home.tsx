@@ -137,7 +137,7 @@ const Home: React.FC = () => {
   return (
     <div className="space-y-16">
       {/* Discount Slider */}
-      <section className="relative h-96 md:h-[500px] overflow-hidden">
+      <section className="relative h-64 sm:h-80 md:h-96 lg:h-[500px] overflow-hidden">
         <div className="relative h-full">
           {discountSlides.map((slide, index) => (
             <div
@@ -153,19 +153,19 @@ const Home: React.FC = () => {
               >
                 <div className="absolute inset-0 bg-black bg-opacity-50"></div>
                 <div className="relative h-full flex items-center justify-center text-center text-white">
-                  <div className="max-w-4xl mx-auto px-4">
-                    <h1 className="text-4xl md:text-6xl font-bold mb-4 animate-fade-in">
+                  <div className="max-w-4xl mx-auto px-4 sm:px-6">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold mb-2 sm:mb-4 animate-fade-in">
                       {slide.title}
                     </h1>
-                    <p className="text-xl md:text-2xl mb-8 animate-slide-up">
+                    <p className="text-sm sm:text-lg md:text-xl lg:text-2xl mb-4 sm:mb-6 md:mb-8 animate-slide-up">
                       {slide.subtitle}
                     </p>
                     <Link
                       to={slide.link}
-                      className="inline-flex items-center space-x-2 bg-accent-500 hover:bg-accent-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all duration-200 hover:scale-105 animate-bounce-subtle"
+                      className="inline-flex items-center space-x-2 bg-accent-500 hover:bg-accent-600 text-white font-bold py-2 px-4 sm:py-3 sm:px-6 md:py-4 md:px-8 rounded-lg text-sm sm:text-base md:text-lg transition-all duration-200 hover:scale-105 animate-bounce-subtle"
                     >
                       <span>{slide.cta}</span>
-                      <ArrowRight className="h-6 w-6" />
+                      <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
                     </Link>
                   </div>
                 </div>
@@ -177,24 +177,24 @@ const Home: React.FC = () => {
         {/* Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-3 rounded-full transition-all duration-200"
+          className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 sm:p-3 rounded-full transition-all duration-200"
         >
-          <ChevronLeft className="h-6 w-6" />
+          <ChevronLeft className="h-4 w-4 sm:h-6 sm:w-6" />
         </button>
         <button
           onClick={nextSlide}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-3 rounded-full transition-all duration-200"
+          className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 sm:p-3 rounded-full transition-all duration-200"
         >
-          <ChevronRight className="h-6 w-6" />
+          <ChevronRight className="h-4 w-4 sm:h-6 sm:w-6" />
         </button>
 
         {/* Slide Indicators */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+        <div className="absolute bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
           {discountSlides.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-200 ${
+              className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-200 ${
                 index === currentSlide ? 'bg-white' : 'bg-white bg-opacity-50'
               }`}
             />
@@ -204,16 +204,16 @@ const Home: React.FC = () => {
 
       {/* Features Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
           {features.map((feature, index) => (
-            <div key={index} className="text-center p-6 card hover:scale-105 transform transition-transform duration-200">
+            <div key={index} className="text-center p-4 sm:p-6 card hover:scale-105 transform transition-transform duration-200">
               <div className="flex justify-center mb-4">
-                <div className="p-3 bg-primary-100 rounded-full">
-                  <feature.icon className="h-8 w-8 text-primary-600" />
+                <div className="p-2 sm:p-3 bg-primary-100 rounded-full">
+                  <feature.icon className="h-6 w-6 sm:h-8 sm:w-8 text-primary-600" />
                 </div>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
-              <p className="text-gray-600">{feature.description}</p>
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
+              <p className="text-sm sm:text-base text-gray-600">{feature.description}</p>
             </div>
           ))}
         </div>
@@ -222,15 +222,15 @@ const Home: React.FC = () => {
       {/* Featured Products */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Featured Products</h2>
-          <p className="text-gray-600 text-lg">Discover our most popular and trending items</p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">Featured Products</h2>
+          <p className="text-gray-600 text-sm sm:text-base md:text-lg">Discover our most popular and trending items</p>
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
             {[...Array(8)].map((_, index) => (
               <div key={index} className="card p-4 animate-pulse">
-                <div className="bg-gray-300 h-48 rounded-md mb-4"></div>
+                <div className="bg-gray-300 h-32 sm:h-40 md:h-48 rounded-md mb-4"></div>
                 <div className="space-y-2">
                   <div className="bg-gray-300 h-4 rounded"></div>
                   <div className="bg-gray-300 h-4 rounded w-3/4"></div>
@@ -240,7 +240,7 @@ const Home: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
             {featuredProducts.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
@@ -252,7 +252,7 @@ const Home: React.FC = () => {
       {Object.entries(productsByCategory).map(([category, products]) => (
         <section key={category} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 capitalize">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 capitalize">
               {category === 'electronics' ? 'Latest Electronics' :
                 category === 'clothing' ? 'Fashion & Style' :
                   category === 'home' ? 'Home & Living' :
@@ -260,14 +260,14 @@ const Home: React.FC = () => {
             </h2>
             <Link
               to={`/products?category=${category}`}
-              className="text-primary-600 hover:text-primary-700 font-medium flex items-center space-x-1"
+              className="text-primary-600 hover:text-primary-700 font-medium flex items-center space-x-1 text-sm sm:text-base"
             >
               <span>View All</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
             {products.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
@@ -279,11 +279,11 @@ const Home: React.FC = () => {
       <section className="bg-gray-100 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Shop by Category</h2>
-            <p className="text-gray-600 text-lg">Explore our wide range of product categories</p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">Shop by Category</h2>
+            <p className="text-gray-600 text-sm sm:text-base md:text-lg">Explore our wide range of product categories</p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
             {[
               { name: 'Electronics', image: 'https://images.pexels.com/photos/356056/pexels-photo-356056.jpeg?auto=compress&cs=tinysrgb&w=300', category: 'electronics' },
               { name: 'Fashion', image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=300', category: 'clothing' },
@@ -306,8 +306,8 @@ const Home: React.FC = () => {
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                 </div>
-                <div className="p-4 text-center">
-                  <h3 className="font-semibold text-gray-900">{category.name}</h3>
+                <div className="p-2 sm:p-4 text-center">
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900">{category.name}</h3>
                 </div>
               </Link>
             ))}
@@ -318,15 +318,15 @@ const Home: React.FC = () => {
       {/* Newsletter Signup */}
       <section className="bg-primary-600 text-white py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">Stay Updated with Latest Deals</h2>
-          <p className="text-xl mb-8">Subscribe to our newsletter and never miss a great offer!</p>
-          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4">Stay Updated with Latest Deals</h2>
+          <p className="text-base sm:text-xl mb-6 sm:mb-8">Subscribe to our newsletter and never miss a great offer!</p>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-md mx-auto">
             <input
               type="email"
               placeholder="Enter your email"
-              className="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-accent-500"
+              className="flex-1 px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm sm:text-base"
             />
-            <button className="bg-accent-500 hover:bg-accent-600 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200">
+            <button className="bg-accent-500 hover:bg-accent-600 text-white font-bold py-2 px-4 sm:py-3 sm:px-6 rounded-lg transition-colors duration-200 text-sm sm:text-base">
               Subscribe
             </button>
           </div>
