@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Grid as GridIcon, List as ListIcon, Filter as FilterIcon, X as XIcon } from 'lucide-react';
 import { FormControl, Select, MenuItem, Slider, Chip, Pagination } from '@mui/material';
+import axios from 'axios';
 import ProductCard from '../components/Product/ProductCard';
 
 interface Product {
@@ -37,7 +38,6 @@ const ProductListing: React.FC = () => {
     hasPrev: false,
   });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
 
@@ -85,6 +85,13 @@ const ProductListing: React.FC = () => {
     { value: 'rating.average-desc', label: 'Highest Rated' },
     { value: 'rating.count-desc', label: 'Most Reviewed' },
   ];
+
+  // Set up axios instance with base URL
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;  // e.g. https://shopcart-com-e-commerce-web.onrender.com or including /api as you've configured
+  const api = axios.create({
+    baseURL: API_BASE_URL,
+    withCredentials: true,
+  });
 
   const updateSearchParams = (updates: Record<string, string | null>) => {
     const newParams = new URLSearchParams(searchParams.toString());
@@ -138,8 +145,6 @@ const ProductListing: React.FC = () => {
 
   const fetchProducts = async () => {
     setLoading(true);
-    setError(null);
-    
     try {
       // Construct params
       const params: Record<string, string | number> = {
@@ -155,7 +160,7 @@ const ProductListing: React.FC = () => {
       if (priceRange[0] > 0) params.minPrice = priceRange[0];
       if (priceRange[1] < 2000) params.maxPrice = priceRange[1];
 
-      const response = await api.get(API_CONFIG.ENDPOINTS.PRODUCTS, { params });
+      const response = await api.get('/api/products', { params });
       const data = response.data;
 
       setProducts(data.products || []);
@@ -177,10 +182,8 @@ const ProductListing: React.FC = () => {
           hasPrev: false,
         });
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('Failed to fetch products:', err);
-      const errorMessage = err.response?.data?.message || err.message || 'Failed to fetch products';
-      setError(errorMessage);
       setProducts([]);
       setPagination({
         currentPage: 1,
@@ -208,27 +211,6 @@ const ProductListing: React.FC = () => {
 
     fetchProducts();
   }, [searchParams, sortBy, sortOrder, priceRange]);
-
-  // Error state
-  if (error) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center py-16">
-          <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Unable to connect to backend</h2>
-          <p className="text-gray-600 mb-4">Backend URL: {API_CONFIG.BASE_URL}</p>
-          <p className="text-gray-600 mb-4">Error: {error}</p>
-          <div className="space-y-2 mb-6">
-            <p className="text-sm text-gray-500">Make sure your backend server is running and accessible at:</p>
-            <code className="bg-gray-100 px-2 py-1 rounded text-sm">{API_CONFIG.BASE_URL}/api/products</code>
-          </div>
-          <button onClick={fetchProducts} className="btn-primary">
-            Retry Connection
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
