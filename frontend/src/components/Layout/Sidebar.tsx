@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  X, 
-  Home, 
-  Package, 
-  Smartphone, 
-  Shirt, 
+import {
+  X,
+  Home,
+  Package,
+  Smartphone,
+  Shirt,
   Monitor,
   Gamepad2,
   Book,
@@ -26,7 +26,6 @@ interface Category {
   path: string;
 }
 
-// Map iconName from backend to actual icon component
 const iconMap: Record<string, React.ElementType> = {
   Smartphone,
   Shirt,
@@ -36,6 +35,7 @@ const iconMap: Record<string, React.ElementType> = {
   Sparkles,
   Gamepad2,
   Car,
+  Monitor,
 };
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
@@ -48,11 +48,9 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
       try {
         const response = await fetch(`${API_BASE_URL}/api/categories`);
         const data = await response.json();
-        // Assuming API returns array of { name, iconName, path }
         setCategories(data);
       } catch (error) {
         console.error('Failed to fetch categories', error);
-        // fallback to default if needed
         setCategories([
           { name: 'Electronics', iconName: 'Smartphone', path: '/products?category=electronics' },
           { name: 'Clothing', iconName: 'Shirt', path: '/products?category=clothing' },
@@ -70,18 +68,20 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
   }, []);
 
   return (
-    <Drawer anchor="left" open={open} onClose={onClose}>
+    <Drawer
+      anchor="left"
+      open={open}
+      onClose={onClose}
+      sx={{ zIndex: 1301 }} // Make sure it's above the navbar
+    >
       <div className="w-64 bg-white h-full">
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-lg font-semibold text-gray-900">Categories</h2>
-          <button 
-            onClick={onClose}
-            className="p-1 rounded-md text-gray-400 hover:text-gray-600"
-          >
+          <button onClick={onClose} className="p-1 rounded-md text-gray-400 hover:text-gray-600">
             <X className="h-6 w-6" />
           </button>
         </div>
-        
+
         <List>
           <ListItem button component={Link} to="/" onClick={onClose}>
             <ListItemIcon>
@@ -89,24 +89,24 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItem>
-          
+
           <ListItem button component={Link} to="/products" onClick={onClose}>
             <ListItemIcon>
               <Package className="h-5 w-5" />
             </ListItemIcon>
             <ListItemText primary="All Products" />
           </ListItem>
-          
+
           <Divider />
-          
+
           {categories.map((category) => {
             const IconComponent = iconMap[category.iconName] || Package;
             return (
-              <ListItem 
-                key={category.name} 
-                button 
-                component={Link} 
-                to={category.path} 
+              <ListItem
+                key={category.name}
+                button
+                component={Link}
+                to={category.path}
                 onClick={onClose}
               >
                 <ListItemIcon>

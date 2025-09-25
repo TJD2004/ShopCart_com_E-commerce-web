@@ -28,11 +28,7 @@ import Sidebar from './Sidebar';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
-interface NavbarProps {
-  onMenuClick?: () => void;
-}
-
-const Navbar: React.FC<NavbarProps> = () => {
+const Navbar: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -59,15 +55,9 @@ const Navbar: React.FC<NavbarProps> = () => {
     e.preventDefault();
     const trimmedQuery = searchQuery.trim();
     if (!trimmedQuery) return;
-
-    try {
-      navigate(`/products?search=${encodeURIComponent(trimmedQuery)}`);
-    } catch (error) {
-      console.error('Search failed:', error);
-    }
+    navigate(`/products?search=${encodeURIComponent(trimmedQuery)}`);
   };
 
-  // Fetch search suggestions as user types
   useEffect(() => {
     const fetchSuggestions = async () => {
       const trimmedQuery = searchQuery.trim();
@@ -80,15 +70,14 @@ const Navbar: React.FC<NavbarProps> = () => {
         const response = await fetch(`${API_BASE_URL}/api/products/search?q=${encodeURIComponent(trimmedQuery)}`);
         if (response.ok) {
           const data = await response.json();
-          setSearchResults(data?.slice(0, 5)); // Limit to 5 suggestions
+          setSearchResults(data?.slice(0, 5));
         }
       } catch (err) {
         console.error('Failed to fetch search suggestions', err);
       }
     };
 
-    const delayDebounce = setTimeout(fetchSuggestions, 300); // debounce
-
+    const delayDebounce = setTimeout(fetchSuggestions, 300);
     return () => clearTimeout(delayDebounce);
   }, [searchQuery]);
 
@@ -100,7 +89,10 @@ const Navbar: React.FC<NavbarProps> = () => {
             {/* Left side - Menu and Logo */}
             <div className="flex items-center space-x-2 sm:space-x-4">
               <button
-                onClick={() => setSidebarOpen(true)}
+                onClick={() => {
+                  console.log('Sidebar opened');
+                  setSidebarOpen(true);
+                }}
                 className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 lg:hidden"
               >
                 <Menu className="h-6 w-6" />
@@ -120,9 +112,9 @@ const Navbar: React.FC<NavbarProps> = () => {
                   placeholder="Search products..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 />
-                <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               </form>
 
               {searchResults.length > 0 && (
@@ -148,12 +140,10 @@ const Navbar: React.FC<NavbarProps> = () => {
 
             {/* Right side - Actions */}
             <div className="flex items-center space-x-2 sm:space-x-4">
-              {/* Mobile search icon */}
               <button className="p-1.5 sm:p-2 text-gray-600 hover:text-gray-900 md:hidden">
                 <Search className="h-5 w-5 sm:h-6 sm:w-6" />
               </button>
 
-              {/* Navigation items */}
               {isAuthenticated ? (
                 <>
                   <Link to="/wishlist" className="p-1.5 sm:p-2 text-gray-600 hover:text-gray-900 relative hidden sm:block">
@@ -208,7 +198,7 @@ const Navbar: React.FC<NavbarProps> = () => {
         </div>
       </nav>
 
-      {/* Sidebar */}
+      {/* Sidebar Drawer */}
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
     </>
   );
