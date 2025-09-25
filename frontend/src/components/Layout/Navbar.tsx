@@ -33,6 +33,7 @@ const Navbar: React.FC = () => {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const { cartCount } = useCart();
   const navigate = useNavigate();
@@ -55,6 +56,7 @@ const Navbar: React.FC = () => {
     e.preventDefault();
     const trimmedQuery = searchQuery.trim();
     if (!trimmedQuery) return;
+    setMobileSearchOpen(false);
     navigate(`/products?search=${encodeURIComponent(trimmedQuery)}`);
   };
 
@@ -88,23 +90,24 @@ const Navbar: React.FC = () => {
           <div className="flex items-center justify-between h-16">
             {/* Left side - Menu and Logo */}
             <div className="flex items-center space-x-2 sm:space-x-4">
+              {/* Show sidebar toggle always, hidden on xl+ if you want */}
               <button
-                onClick={() => {
-                  console.log('Sidebar opened');
-                  setSidebarOpen(true);
-                }}
-                className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 lg:hidden"
+                onClick={() => setSidebarOpen(true)}
+                className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                aria-label="Open sidebar menu"
               >
                 <Menu className="h-6 w-6" />
               </button>
 
               <Link to="/" className="flex items-center space-x-3">
                 <Logo />
-                <span className="text-lg sm:text-xl md:text-2xl font-bold text-primary-600 hidden xs:block">ShopCart.com</span>
+                <span className="text-lg sm:text-xl md:text-2xl font-bold text-primary-600 hidden xs:block">
+                  ShopCart.com
+                </span>
               </Link>
             </div>
 
-            {/* Center - Search Bar */}
+            {/* Center - Search Bar (desktop only) */}
             <div className="flex-1 max-w-2xl mx-2 sm:mx-4 hidden md:block relative">
               <form onSubmit={handleSearch} className="relative">
                 <input
@@ -140,17 +143,30 @@ const Navbar: React.FC = () => {
 
             {/* Right side - Actions */}
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <button className="p-1.5 sm:p-2 text-gray-600 hover:text-gray-900 md:hidden">
+              {/* Mobile search toggle */}
+              <button
+                className="p-1.5 sm:p-2 text-gray-600 hover:text-gray-900 md:hidden"
+                onClick={() => setMobileSearchOpen((prev) => !prev)}
+                aria-label="Toggle search"
+              >
                 <Search className="h-5 w-5 sm:h-6 sm:w-6" />
               </button>
 
               {isAuthenticated ? (
                 <>
-                  <Link to="/wishlist" className="p-1.5 sm:p-2 text-gray-600 hover:text-gray-900 relative hidden sm:block">
+                  <Link
+                    to="/wishlist"
+                    className="p-1.5 sm:p-2 text-gray-600 hover:text-gray-900 relative hidden sm:block"
+                    aria-label="Wishlist"
+                  >
                     <Heart className="h-5 w-5 sm:h-6 sm:w-6" />
                   </Link>
 
-                  <Link to="/cart" className="p-1.5 sm:p-2 text-gray-600 hover:text-gray-900 relative">
+                  <Link
+                    to="/cart"
+                    className="p-1.5 sm:p-2 text-gray-600 hover:text-gray-900 relative"
+                    aria-label="Shopping cart"
+                  >
                     <Badge badgeContent={cartCount} color="primary">
                       <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6" />
                     </Badge>
@@ -160,21 +176,32 @@ const Navbar: React.FC = () => {
                     <button
                       onClick={handleUserMenuClick}
                       className="flex items-center space-x-1 p-1.5 sm:p-2 text-gray-600 hover:text-gray-900"
+                      aria-haspopup="true"
+                      aria-expanded={Boolean(anchorEl)}
+                      aria-controls="user-menu"
                     >
-                      <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: '1rem' }}>
+                      <Avatar
+                        sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: '1rem' }}
+                      >
                         {user?.name?.charAt(0).toUpperCase()}
                       </Avatar>
                       <ChevronDown className="h-4 w-4 hidden sm:block" />
                     </button>
 
                     <MuiMenu
+                      id="user-menu"
                       anchorEl={anchorEl}
                       open={Boolean(anchorEl)}
                       onClose={handleUserMenuClose}
                       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                     >
-                      <MenuItem onClick={() => { navigate('/account'); handleUserMenuClose(); }}>
+                      <MenuItem
+                        onClick={() => {
+                          navigate('/account');
+                          handleUserMenuClose();
+                        }}
+                      >
                         <User className="h-4 w-4 mr-2" />
                         My Account
                       </MenuItem>
@@ -195,6 +222,44 @@ const Navbar: React.FC = () => {
               )}
             </div>
           </div>
+
+          {/* Mobile search input (toggleable) */}
+          {mobileSearchOpen && (
+            <div className="md:hidden px-4 pb-2">
+              <form onSubmit={handleSearch} className="relative">
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  autoFocus
+                  className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              </form>
+
+              {searchResults.length > 0 && (
+                <Paper className="mt-1 rounded-md shadow z-50">
+                  <List>
+                    {searchResults.map((product: any) => (
+                      <ListItem key={product._id} disablePadding>
+                        <ListItemButton
+                          onClick={() => {
+                            navigate(`/product/${product._id}`);
+                            setSearchQuery('');
+                            setSearchResults([]);
+                            setMobileSearchOpen(false);
+                          }}
+                        >
+                          <ListItemText primary={product.title} />
+                        </ListItemButton>
+                      </ListItem>
+                    ))}
+                  </List>
+                </Paper>
+              )}
+            </div>
+          )}
         </div>
       </nav>
 
