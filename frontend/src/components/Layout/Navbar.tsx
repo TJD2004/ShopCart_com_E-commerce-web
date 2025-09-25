@@ -24,7 +24,7 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
 import Logo from '../UI/Logo';
-import Sidebar from '../Sidebar/Sidebar';
+import Sidebar from './Sidebar';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
