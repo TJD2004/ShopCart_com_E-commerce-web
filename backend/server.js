@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 const allowedOrigins = [
   'https://shopcart-com-e-commerce-web.onrender.com',
-  'https://shopcart-e-commerce-web.netlify.app',
+  'https://shopcart-e-commerce-web.vercel.app',
   'http://localhost:5173' // (optional: for local development)
 ];
 
