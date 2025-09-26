@@ -30,6 +30,10 @@ const Account: React.FC = () => {
       country: ''
     }
   });
+
+  // Read backend base URL from environment variable
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState([]);
@@ -41,7 +45,7 @@ const Account: React.FC = () => {
 
   const fetchProfile = async () => {
     try {
-      const response = await axios.get('/api/user/profile');
+      const response = await axios.get(`${API_BASE_URL}/api/user/profile`);
       setProfile(response.data);
     } catch (error) {
       console.error('Failed to fetch profile:', error);
@@ -50,7 +54,7 @@ const Account: React.FC = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get('/api/user/orders');
+      const response = await axios.get(`${API_BASE_URL}/api/user/orders`);
       setOrders(response.data);
     } catch (error) {
       console.error('Failed to fetch orders:', error);
@@ -60,7 +64,7 @@ const Account: React.FC = () => {
   const handleSaveProfile = async () => {
     setLoading(true);
     try {
-      await axios.put('/api/user/profile', profile);
+      await axios.put(`${API_BASE_URL}/api/user/profile`, profile);
       setIsEditing(false);
     } catch (error) {
       console.error('Failed to update profile:', error);
